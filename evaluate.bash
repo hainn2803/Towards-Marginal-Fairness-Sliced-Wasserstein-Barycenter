@@ -1,4 +1,3 @@
-weight_fsw_values=(0.5)
 methods=(EFBSW FBSW lowerboundFBSW OBSW BSW)
 obsw_weights=(0.1 10.0)
 checkpoint_periods=(300 300 300 300 300 300 300 300 300 300)
