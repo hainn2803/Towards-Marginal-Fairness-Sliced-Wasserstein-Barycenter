@@ -106,7 +106,7 @@ def main():
 
     # build train and test set data loaders
     if args.dataset == 'mnist':
-        data_loader = MNISTDataLoader(train_batch_size=args.batch_size, test_batch_size=args.batch_size_test)
+        data_loader = MNISTDataLoader(data_dir=args.datadir, train_batch_size=args.batch_size, test_batch_size=args.batch_size_test)
         train_loader, test_loader = data_loader.create_dataloader()
         model = MNISTAutoencoder().to(device)
     else:
