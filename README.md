@@ -1,13 +1,26 @@
-# No idea
+# Deep Learning Assignment
 
 ## Environment Installation
 
-This repo requires `Python 3.10.12`.
-Run this command: `conda install pytorch==2.1.2 torchvision==0.16.2 torchaudio==2.1.2 pytorch-cuda=11.8 -c pytorch -c nvidia`
-Then run this command: `pip install -r requirements.txt`
+This repository is designed to operate with `Python 3.10.12`. To set up the required environment, execute the following commands:
 
-## Training script:
-Run this command: `bash train_run.bash`
+```bash
+conda install pytorch==2.1.2 torchvision==0.16.2 torchaudio==2.1.2 pytorch-cuda=11.8 -c pytorch -c nvidia
+pip install -r requirements.txt
+```
 
-## Evaluating script:
-After training, we evaluate all methods 10 times and conduct average value for each metric by running this script: `bash evaluate.bash`
+## Training Script
+
+To initiate the training process, execute the following command:
+
+```bash
+bash train_run.bash
+```
+
+## Evaluation Script
+
+Once the training is completed, the evaluation of all methods is performed 10 times, with the average value calculated for each metric. To conduct the evaluation, utilize the following script:
+
+```bash
+bash evaluate.bash
+```
