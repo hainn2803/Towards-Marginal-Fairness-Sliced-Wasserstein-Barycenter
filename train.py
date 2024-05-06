@@ -1,17 +1,16 @@
 import argparse
-import matplotlib as mpl
 import os
-mpl.use('Agg')
 from swae.models.mnist import MNISTAutoencoder
 from swae.trainer import SWAEBatchTrainer
 from swae.distributions import rand_cirlce2d, rand_ring2d, rand_uniform2d, rand, randn
-
 from evaluate.eval import *
-
 import torch.optim as optim
 import torchvision.utils as vutils
 from dataloader.dataloader import *
 from utils import *
+import matplotlib.pyplot as plt
+# import matplotlib as mpl
+# mpl.rcParams.update(mpl.rcParamsDefault)
 
 
 def main():
@@ -217,9 +216,9 @@ def main():
                                 label=class_label)
 
                 plt.legend()
-                plt.rc('text', usetex=True)
-                plt.legend()
-                title = f'{METHOD_NAME[args.method]}' + " F={:.3f}, W={:.3f}".format(F, W)
+                # plt.rc('text', usetex=True)
+                # title = f'{METHOD_NAME[args.method]}' + " F={:.3f}, W={:.3f}".format(F, W)
+                title = f'{args.method}' + " F={:.3f}, W={:.3f}".format(F, W)
                 plt.title(title)
                 plt.savefig('{}/epoch_{}_test_latent.png'.format(outdir_latent, epoch))
                 plt.close()

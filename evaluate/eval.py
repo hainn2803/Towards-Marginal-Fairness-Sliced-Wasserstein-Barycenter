@@ -52,7 +52,7 @@ def ultimate_evaluation(args,
         tensor_generated_images = generate_image(model=model,
                                                  prior_distribution=prior_distribution,
                                                  num_images=total_images,
-                                                 device=device)
+                                                 device="cpu")
         WG = compute_true_Wasserstein(X=tensor_generated_images.reshape(total_images, -1), Y=tensor_real_images.reshape(total_images, -1))
         # Compute LP
         prior_samples = prior_distribution(num_images)
