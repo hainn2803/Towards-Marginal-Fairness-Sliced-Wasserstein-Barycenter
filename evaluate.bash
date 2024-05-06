@@ -1,5 +1,5 @@
 methods=(EFBSW FBSW lowerboundFBSW OBSW BSW)
-obsw_weights=(0.1 10.0)
+obsw_weights=(0.1 1.0 10.0)
 checkpoint_periods=(300 300 300 300 300 300 300 300 300 300)
 fsw=0.5
 datadir=data
