@@ -86,11 +86,12 @@ def main():
     # determine device and device dep. args
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
+    print(device)
     # set random seed
     torch.manual_seed(args.seed)
     if use_cuda:
         torch.cuda.manual_seed(args.seed)
-
+   print(f"Method: {args.method}")
     if args.optimizer == 'rmsprop':
         print(
             'batch size {}\nepochs {}\nRMSprop lr {} alpha {}\ndistribution {}\nusing device {}\nseed set to {}\n'.format(
@@ -177,20 +178,19 @@ def main():
 
             if (epoch + 1) % args.saved_model_interval == 0 or (epoch + 1) == args.epochs:
 
-                RL, LP, WG, F, W = ultimate_evaluation(args=args,
-                                                       model=model,
-                                                       test_loader=test_loader,
-                                                       prior_distribution=distribution_fn,
-                                                       device=device)
-
-                print(f"Evaluating method {args.method} at epoch: {epoch + 1}")
-                print(f" +) Reconstruction loss: {RL}")
-                print(f" +) Wasserstein distance between generated and real images: {WG}")
-                print(f" +) Wasserstein distance between posterior and prior distribution: {LP}")
-                print(f" +) Fairness: {F}")
-                print(f" +) Averaging distance: {W}")
-                print()
-
+                # RL, LP, WG, F, W = ultimate_evaluation(args=args,
+                #                                        model=model,
+                #                                        test_loader=test_loader,
+                #                                        prior_distribution=distribution_fn,
+                #                                        device=device)
+                # print(f"Evaluating method {args.method} at epoch: {epoch + 1}")
+                # print(f" +) Reconstruction loss: {RL}")
+                # print(f" +) Wasserstein distance between generated and real images: {WG}")
+                # print(f" +) Wasserstein distance between posterior and prior distribution: {LP}")
+                # print(f" +) Fairness: {F}")
+                # print(f" +) Averaging distance: {W}")
+                # print()
+                
                 test_encode, test_targets, test_loss = list(), list(), 0.0
                 for test_batch_idx, (x_test, y_test) in enumerate(test_loader, start=0):
                     test_evals = trainer.test_on_batch(x_test)
@@ -218,9 +218,10 @@ def main():
                 plt.legend()
                 # plt.rc('text', usetex=True)
                 # title = f'{METHOD_NAME[args.method]}' + " F={:.3f}, W={:.3f}".format(F, W)
-                title = f'{args.method}' + " F={:.3f}, W={:.3f}".format(F, W)
+                # title = f'{args.method}' + " F={:.3f}, W={:.3f}".format(F, W)
+                title = f'{args.method}'
                 plt.title(title)
-                plt.savefig('{}/epoch_{}_test_latent.png'.format(outdir_latent, epoch))
+                plt.savefig('{}/epoch_{}_test_latent.pdf'.format(outdir_latent, epoch))
                 plt.close()
 
                 e = epoch + 1
