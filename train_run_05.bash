@@ -1,11 +1,11 @@
 #!/bin/bash -e
-#SBATCH --job-name=fsw
 #SBATCH --job-name=fsw_05
 #SBATCH --output=/lustre/scratch/client/vinai/users/hainn14/chuyen-rang/fsw_05.out
 #SBATCH --error=/lustre/scratch/client/vinai/users/hainn14/chuyen-rang/fsw_05.err
+#SBATCH --exclude=sdc2-hpc-dgx-a100-019,sdc2-hpc-dgx-a100-020
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node=1
-#SBATCH --mem-per-gpu=125G
+#SBATCH --mem-per-gpu=90G
 #SBATCH --cpus-per-gpu=32
 #SBATCH --partition=research
 #SBATCH --mail-type=all

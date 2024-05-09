@@ -2,9 +2,10 @@
 #SBATCH --job-name=fsw_1
 #SBATCH --output=/lustre/scratch/client/vinai/users/hainn14/chuyen-rang/fsw_1.out
 #SBATCH --error=/lustre/scratch/client/vinai/users/hainn14/chuyen-rang/fsw_1.err
+#SBATCH --exclude=sdc2-hpc-dgx-a100-019,sdc2-hpc-dgx-a100-020
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node=1
-#SBATCH --mem-per-gpu=125G
+#SBATCH --mem-per-gpu=90G
 #SBATCH --cpus-per-gpu=32
 #SBATCH --partition=research
 #SBATCH --mail-type=all
@@ -13,7 +14,7 @@ prep_env fairsw
 cd /lustre/scratch/client/vinai/users/hainn14/chuyen-rang
 
 weight_fsw_values=(0.5)
-methods=(BSW)
+methods=(EFBSW FBSW lowerboundFBSW BSW)
 obsw_weights=(0.1 1.0 10.0)
 num_epochs=300
 seed_id=42
