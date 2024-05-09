@@ -1,16 +1,16 @@
-# #!/bin/bash -e
-# #SBATCH --job-name=fsw_1
-# #SBATCH --output=/lustre/scratch/client/vinai/users/hainn14/chuyen-rang/fsw_1.out
-# #SBATCH --error=/lustre/scratch/client/vinai/users/hainn14/chuyen-rang/fsw_1.err
-# #SBATCH --nodes=1
-# #SBATCH --gpus-per-node=1
-# #SBATCH --mem-per-gpu=125G
-# #SBATCH --cpus-per-gpu=32
-# #SBATCH --partition=research
-# #SBATCH --mail-type=all
-# #SBATCH --mail-user=v.HaiNN14@vinai.io
-# prep_env fairsw
-# cd /lustre/scratch/client/vinai/users/hainn14/chuyen-rang
+#!/bin/bash -e
+#SBATCH --job-name=fsw_1
+#SBATCH --output=/lustre/scratch/client/vinai/users/hainn14/chuyen-rang/fsw_1.out
+#SBATCH --error=/lustre/scratch/client/vinai/users/hainn14/chuyen-rang/fsw_1.err
+#SBATCH --nodes=1
+#SBATCH --gpus-per-node=1
+#SBATCH --mem-per-gpu=125G
+#SBATCH --cpus-per-gpu=32
+#SBATCH --partition=research
+#SBATCH --mail-type=all
+#SBATCH --mail-user=v.HaiNN14@vinai.io
+prep_env fairsw
+cd /lustre/scratch/client/vinai/users/hainn14/chuyen-rang
 
 weight_fsw_values=(0.5)
 methods=(BSW)
