@@ -91,7 +91,7 @@ def main():
     torch.manual_seed(args.seed)
     if use_cuda:
         torch.cuda.manual_seed(args.seed)
-   print(f"Method: {args.method}")
+    print(f"Method: {args.method}")
     if args.optimizer == 'rmsprop':
         print(
             'batch size {}\nepochs {}\nRMSprop lr {} alpha {}\ndistribution {}\nusing device {}\nseed set to {}\n'.format(

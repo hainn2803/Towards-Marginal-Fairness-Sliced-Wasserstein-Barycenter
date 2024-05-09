@@ -1,19 +1,19 @@
-#!/bin/bash -e
-#SBATCH --job-name=fsw_1
-#SBATCH --output=/lustre/scratch/client/vinai/users/hainn14/chuyen-rang/fsw_1.out
-#SBATCH --error=/lustre/scratch/client/vinai/users/hainn14/chuyen-rang/fsw_1.err
-#SBATCH --nodes=1
-#SBATCH --gpus-per-node=1
-#SBATCH --mem-per-gpu=125G
-#SBATCH --cpus-per-gpu=32
-#SBATCH --partition=research
-#SBATCH --mail-type=all
-#SBATCH --mail-user=v.HaiNN14@vinai.io
-prep_env fairsw
-cd /lustre/scratch/client/vinai/users/hainn14/chuyen-rang
+# #!/bin/bash -e
+# #SBATCH --job-name=fsw_1
+# #SBATCH --output=/lustre/scratch/client/vinai/users/hainn14/chuyen-rang/fsw_1.out
+# #SBATCH --error=/lustre/scratch/client/vinai/users/hainn14/chuyen-rang/fsw_1.err
+# #SBATCH --nodes=1
+# #SBATCH --gpus-per-node=1
+# #SBATCH --mem-per-gpu=125G
+# #SBATCH --cpus-per-gpu=32
+# #SBATCH --partition=research
+# #SBATCH --mail-type=all
+# #SBATCH --mail-user=v.HaiNN14@vinai.io
+# prep_env fairsw
+# cd /lustre/scratch/client/vinai/users/hainn14/chuyen-rang
 
 weight_fsw_values=(0.5)
-methods=(EFBSW FBSW lowerboundFBSW BSW)
+methods=(BSW)
 obsw_weights=(0.1 1.0 10.0)
 num_epochs=300
 seed_id=42
@@ -22,7 +22,7 @@ batch_size_test=128
 distribution="circle"
 optimizer="rmsprop"
 lr=0.001
-saved_model_interval=50
+saved_model_interval=100
 alpha=0.9
 datadir="data"
 outdir="result"
