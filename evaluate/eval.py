@@ -6,12 +6,13 @@ def compute_F_AD(list_features,
                  list_labels,
                  prior_distribution,
                  num_classes,
+                 num_samples,
                  device):
     with torch.no_grad():
         dist_swd = list()
         for cls_id in range(num_classes):
             features_cls = list_features[list_labels == cls_id]
-            z_samples = prior_distribution(features_cls.shape[0]).to(device)
+            z_samples = prior_distribution(num_samples).to(device)
             wd = compute_true_Wasserstein(X=features_cls, Y=z_samples)
             dist_swd.append(wd)
     return compute_fairness(dist_swd), compute_averaging_distance(dist_swd)
@@ -21,6 +22,7 @@ def ultimate_evaluation(args,
                         model,
                         test_loader,
                         prior_distribution,
+                        num_samples,
                         device='cpu'):
     with torch.no_grad():
         model.eval()
@@ -63,6 +65,7 @@ def ultimate_evaluation(args,
                              list_labels=tensor_labels,
                              prior_distribution=prior_distribution,
                              num_classes=args.num_classes,
+                             num_samples=total_images,
                              device="cpu")
 
         RL = convert_to_cpu_number(RL)
