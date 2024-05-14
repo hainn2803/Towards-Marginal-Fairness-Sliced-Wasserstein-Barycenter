@@ -129,3 +129,8 @@ fid/fid_inceptionV3.pth
 plotted_images
 output.txt
 extract_table*
+table_template.txt
+plot_image.bash
+plot_latent.bash
+plot_latent.py
+reconstruct_image.py
