@@ -127,3 +127,5 @@ data/
 fid/fid_inceptionV3.pth
 
 plotted_images
+output.txt
+extract_table*
