@@ -22,7 +22,6 @@ def ultimate_evaluation(args,
                         model,
                         test_loader,
                         prior_distribution,
-                        num_samples,
                         device='cpu'):
     with torch.no_grad():
         model.eval()

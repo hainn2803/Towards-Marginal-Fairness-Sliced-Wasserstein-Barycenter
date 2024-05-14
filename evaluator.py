@@ -89,7 +89,6 @@ def main():
         print(f"Check if pretrained model path {pretrained_model_path} exit or not: {check_path}")
         assert os.path.isfile(pretrained_model_path) is True, f"not exist {pretrained_model_path}"
         output_file = f'{args.outdir}/evaluate_epoch_{args.checkpoint_period}_{args.method}.log'
-        print(model)
         if device == "cpu":
             model.load_state_dict(torch.load(pretrained_model_path, map_location=torch.device('cpu')))
         else:

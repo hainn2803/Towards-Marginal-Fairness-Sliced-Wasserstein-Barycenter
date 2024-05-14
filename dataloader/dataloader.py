@@ -30,8 +30,8 @@ class BaseDataLoader:
             class_idxs=all_classes_indices,
             batch_size=self.train_batch_size,
             n_batches=len(self.train_dataset.targets) // self.train_batch_size,
-            alpha=1.0,
-            kind='fixed'
+            alpha=0,
+            kind='random'
         )
 
         self.train_loader = DataLoader(self.train_dataset, batch_sampler=batch_sampler)

@@ -282,9 +282,16 @@ def OBSW(Xs,X,L=10,lam=1,p=2,device='cpu'):
     X_prod = torch.matmul(X, theta.transpose(0, 1))
     Xs_prod_sorted = torch.sort(Xs_prod,dim=1)[0]
     X_prod_sorted = torch.sort(X_prod, dim=0)[0]
-    wasserstein_distance = torch.abs(Xs_prod_sorted-X_prod_sorted) # torch.Size([1000, 10000])
-    sw = torch.mean(torch.pow(wasserstein_distance, p), dim=1)# K\times L # torch.Size([1000])
+    wasserstein_distance = torch.abs(Xs_prod_sorted-X_prod_sorted)
+    sw = torch.mean(torch.pow(wasserstein_distance, p), dim=1)
     return torch.mean(sw)+lam*torch.cdist(sw.view(-1,1),sw.view(-1,1),p=1).sum()/(sw.shape[0]*sw.shape[0] - sw.shape[0])
+
+def OBSW_list(Xs,X,L=10,lam=1,p=2,device="cpu"):
+    dim = X.size(1)
+    theta = rand_projections(dim=dim, num_projections=L, device=device)
+    sw = [torch.mean(one_dimensional_Wasserstein(Xs[i], X, theta, p=p))for i in range(len(Xs))]
+    sw = torch.tensor(sw)
+    return torch.mean(sw) + lam * torch.cdist(sw.view(-1,1), sw.view(-1,1), p=1).sum() / (sw.shape[0]*sw.shape[0] - sw.shape[0])
 
 def sliced_wasserstein_distance(encoded_samples,
                                 distribution_samples,

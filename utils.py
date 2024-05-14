@@ -45,3 +45,17 @@ def plot_convergence(iterations, data, ylabel, title, filename):
     plt.grid(True)
     plt.savefig(filename)
     plt.close()
+    
+def display_and_save_images(images, title=None, save_path=None, rows=5, cols=5):
+    fig, axs = plt.subplots(rows, cols, figsize=(10, 10), facecolor='black')
+    for i in range(rows):
+        for j in range(cols):
+            ax = axs[i, j]
+            img = images[i * cols + j].cpu().numpy().squeeze()
+            ax.imshow(img, cmap='gray')
+            ax.axis('off')
+    plt.tight_layout()
+    if save_path:
+        plt.savefig(save_path, bbox_inches='tight', pad_inches=0, facecolor='black')
+    else:
+        plt.show()
