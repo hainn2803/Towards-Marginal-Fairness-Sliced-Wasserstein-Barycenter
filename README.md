@@ -1,4 +1,4 @@
-# Deep Learning Assignment
+# Sliced Wasserstein Autoencoder with Class-Fair Representation
 
 ## Environment Installation
 
@@ -14,7 +14,7 @@ pip install -r requirements.txt
 To initiate the training process, execute the following command:
 
 ```bash
-bash train_run.bash
+bash train_run.sh
 ```
 
 ## Evaluation Script
@@ -22,5 +22,5 @@ bash train_run.bash
 Once the training is completed, the evaluation of all methods is performed 10 times, with the average value calculated for each metric. To conduct the evaluation, utilize the following script:
 
 ```bash
-bash evaluate.bash
+bash evaluate.sh
 ```
