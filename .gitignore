@@ -134,3 +134,11 @@ plot_image.bash
 plot_latent.bash
 plot_latent.py
 reconstruct_image.py
+
+evaluate_2.sh
+evaluate_3.sh
+evaluate_4.sh
+
+train_run_2.sh
+train_run_3.sh
+train_run_4.sh

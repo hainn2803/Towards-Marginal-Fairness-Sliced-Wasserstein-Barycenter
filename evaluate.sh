@@ -7,7 +7,7 @@ outputdir=result
 distribution=circle
 batch_size=128
 batch_size_test=128
-seed=28
+seed=42
 lr=0.001
 
 for ckp in "${checkpoint_periods[@]}"; do
