@@ -1,16 +1,15 @@
 import argparse
 import os
 from swae.models.mnist import MNISTAutoencoder
+from swae.models.cifar10 import CIFAR10Autoencoder
 from swae.trainer import SWAEBatchTrainer
-from swae.distributions import rand_cirlce2d, rand_ring2d, rand_uniform2d, rand, randn
-from evaluate.eval import *
+from swae.distributions import *
 import torch.optim as optim
 import torchvision.utils as vutils
 from dataloader.dataloader import *
 from utils import *
 import matplotlib.pyplot as plt
-# import matplotlib as mpl
-# mpl.rcParams.update(mpl.rcParamsDefault)
+from sklearn.manifold import TSNE
 
 
 def main():
@@ -37,11 +36,12 @@ def main():
     parser.add_argument('--num-projections', type=int, default=10000, metavar='NP',
                         help='number of projections (default: 500)')
     parser.add_argument('--embedding-size', type=int, default=48, metavar='ES',
+    parser.add_argument('--embedding-size', type=int, default=48, metavar='ES',
                         help='embedding latent space (default: 48)')
     parser.add_argument('--alpha', type=float, default=0.9, metavar='A',
                         help='RMSprop alpha/rho (default: 0.9)')
-    parser.add_argument('--beta1', type=float, default=0.5, metavar='B1',
-                        help='Adam beta1 (default: 0.5)')
+    parser.add_argument('--beta1', type=float, default=0.9, metavar='B1',
+                        help='Adam beta1 (default: 0.9)')
     parser.add_argument('--beta2', type=float, default=0.999, metavar='B2',
                         help='Adam beta2 (default: 0.999)')
     parser.add_argument('--distribution', type=str, default='circle', metavar='DIST',
@@ -91,7 +91,7 @@ def main():
     torch.manual_seed(args.seed)
     if use_cuda:
         torch.cuda.manual_seed(args.seed)
-    print(f"Method: {args.method}")
+    print(f"Method: {args.method} \n")
     if args.optimizer == 'rmsprop':
         print(
             'batch size {}\nepochs {}\nRMSprop lr {} alpha {}\ndistribution {}\nusing device {}\nseed set to {}\n'.format(
@@ -110,6 +110,10 @@ def main():
         data_loader = MNISTDataLoader(data_dir=args.datadir, train_batch_size=args.batch_size, test_batch_size=args.batch_size_test)
         train_loader, test_loader = data_loader.create_dataloader()
         model = MNISTAutoencoder().to(device)
+    elif args.dataset == 'cifar10':
+        data_loader = CIFAR10DataLoader(data_dir=args.datadir, train_batch_size=args.batch_size, test_batch_size=args.batch_size_test)
+        train_loader, test_loader = data_loader.create_dataloader()
+        model = CIFAR10Autoencoder(embedding_dim=args.embedding_size).to(device)
     else:
         raise NotImplementedError
 
@@ -133,7 +137,12 @@ def main():
         else:
             distribution_fn = rand_uniform2d
     else:
-        raise ('distribution {} not supported'.format(args.distribution))
+        if args.distribution == 'uniform':
+            distribution_fn = rand(args.embedding_size)
+        elif args.distribution == 'normal':
+            distribution_fn = randn(args.embedding_size)
+        else:
+            raise ('distribution {} not supported'.format(args.distribution))
 
     # create batch sliced_wasserstein autoencoder trainer
     trainer = SWAEBatchTrainer(autoencoder=model,
@@ -178,19 +187,6 @@ def main():
 
             if (epoch + 1) % args.saved_model_interval == 0 or (epoch + 1) == args.epochs:
 
-                # RL, LP, WG, F, W = ultimate_evaluation(args=args,
-                #                                        model=model,
-                #                                        test_loader=test_loader,
-                #                                        prior_distribution=distribution_fn,
-                #                                        device=device)
-                # print(f"Evaluating method {args.method} at epoch: {epoch + 1}")
-                # print(f" +) Reconstruction loss: {RL}")
-                # print(f" +) Wasserstein distance between generated and real images: {WG}")
-                # print(f" +) Wasserstein distance between posterior and prior distribution: {LP}")
-                # print(f" +) Fairness: {F}")
-                # print(f" +) Averaging distance: {W}")
-                # print()
-                
                 test_encode, test_targets, test_loss = list(), list(), 0.0
                 for test_batch_idx, (x_test, y_test) in enumerate(test_loader, start=0):
                     test_evals = trainer.test_on_batch(x_test)
@@ -203,6 +199,10 @@ def main():
                 test_encode, test_targets = torch.cat(test_encode), torch.cat(test_targets)
                 test_encode, test_targets = test_encode.cpu().numpy(), test_targets.cpu().numpy()
                 print(f"Shape of test dataset to plot: {test_encode.shape}, {test_targets.shape}")
+                
+                if test_encode.shape[1] >= 2:
+                    tsne = TSNE(n_components=2, random_state=args.seed)
+                    test_encode = tsne.fit_transform(test_encode)
 
                 # plot
                 plt.figure(figsize=(10, 10))
@@ -234,12 +234,9 @@ def main():
                 torch.save(model.state_dict(), '{}/{}_{}.pth'.format(chkptdir_epoch, args.dataset, args.method))
                 vutils.save_image(x, '{}/{}_train_samples.png'.format(imagesdir_epoch, args.distribution))
                 vutils.save_image(batch['decode'].detach(),
-                                  '{}/{}_train_recon.png'.format(imagesdir_epoch, args.distribution),
-                                  normalize=True)
-                gen_image = generate_image(model=model, prior_distribution=distribution_fn, num_images=500,
-                                           device=device)
-                vutils.save_image(gen_image,
-                                  '{}/gen_image.png'.format(imagesdir_epoch), normalize=True)
+                                  '{}/{}_train_recon.png'.format(imagesdir_epoch, args.distribution), normalize=True)
+                gen_image = generate_image(model=model, prior_distribution=distribution_fn, num_images=500, device=device)
+                vutils.save_image(gen_image, '{}/gen_image.png'.format(imagesdir_epoch), normalize=True)
 
     plot_convergence(range(1, len(list_loss) + 1), list_loss, 'Test loss',
                      f'In testing loss convergence plot of {args.method}',

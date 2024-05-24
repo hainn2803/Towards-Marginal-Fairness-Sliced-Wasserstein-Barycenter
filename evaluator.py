@@ -3,8 +3,10 @@ import matplotlib as mpl
 import os
 mpl.use('Agg')
 from swae.models.mnist import MNISTAutoencoder
-from swae.distributions import rand_cirlce2d, rand_ring2d, rand_uniform2d
+from swae.models.cifar10 import CIFAR10Autoencoder
+from swae.distributions import *
 from evaluate.eval import *
+from evaluate.eval_fid import *
 from dataloader.dataloader import *
 from utils import *
 
@@ -48,6 +50,10 @@ def main():
                         help='checkpoint period (100, 200, 300)')
     args = parser.parse_args()
 
+    torch.manual_seed(args.seed)
+    if use_cuda:
+        torch.cuda.manual_seed(args.seed)
+        
     if args.method == "OBSW":
         args.method = f"OBSW_{args.lambda_obsw}"
 
@@ -62,15 +68,16 @@ def main():
     outdir_checkpoint = os.path.join(args.outdir, "checkpoint")
     args.datadir = os.path.join(args.datadir, args.dataset)
 
-
-    if args.dataset == "mnist":
-        data_loader = MNISTDataLoader(data_dir=args.datadir, train_batch_size=args.batch_size,
-                                      test_batch_size=args.batch_size_test)
+    if args.dataset == 'mnist':
+        data_loader = MNISTDataLoader(data_dir=args.datadir, train_batch_size=args.batch_size, test_batch_size=args.batch_size_test)
+        train_loader, test_loader = data_loader.create_dataloader()
         model = MNISTAutoencoder().to(device)
+    elif args.dataset == 'cifar10':
+        data_loader = CIFAR10DataLoader(data_dir=args.datadir, train_batch_size=args.batch_size, test_batch_size=args.batch_size_test)
+        train_loader, test_loader = data_loader.create_dataloader()
+        model = CIFAR10Autoencoder(embedding_dim=args.embedding_size).to(device)
     else:
-        raise ('dataset {} not supported'.format(args.dataset))
-
-    train_loader, test_loader = data_loader.create_dataloader()
+        raise NotImplementedError
 
     if args.dataset == 'mnist':
         if args.distribution == 'circle':
@@ -80,7 +87,12 @@ def main():
         else:
             distribution_fn = rand_uniform2d
     else:
-        raise ('distribution {} not supported'.format(args.distribution))
+        if args.distribution == 'uniform':
+            distribution_fn = rand(args.embedding_size)
+        elif args.distribution == 'normal':
+            distribution_fn = randn(args.embedding_size)
+        else:
+            raise ('distribution {} not supported'.format(args.distribution))
 
     with torch.no_grad():
 
@@ -94,11 +106,18 @@ def main():
         else:
             model.load_state_dict(torch.load(pretrained_model_path))
 
-            RL, LP, WG, F, AD = ultimate_evaluation(args=args,
-                                                    model=model,
-                                                    test_loader=test_loader,
-                                                    prior_distribution=distribution_fn,
-                                                    device=device)
+            if args.dataset == "mnist":
+                RL, LP, WG, F, AD = ultimate_evaluation(args=args,
+                                                        model=model,
+                                                        test_loader=test_loader,
+                                                        prior_distribution=distribution_fn,
+                                                        device=device)
+            else:
+                RL, LP, WG, F, AD = ultimate_evaluate_fid(args=args,
+                                                          model=model,
+                                                          test_loader=test_loader,
+                                                          prior_distribution=distribution_fn,
+                                                          device=device)
         with open(output_file, 'a') as f:
             f.write(f"Evaluating pretrained model: {pretrained_model_path}:\n")
             f.write(f" +) Reconstruction loss: {RL}\n")
