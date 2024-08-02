@@ -20,7 +20,7 @@ class CIFAR10Encoder(nn.Module):
         self.embedding_dim_ = embedding_dim
 
         self.features = nn.Sequential(
-            # 64x64
+            # 32x32
             nn.Conv2d(3, self.init_num_filters_, kernel_size=4, stride=2, padding=1, bias=False),
             nn.LeakyReLU(self.lrelu_slope_, inplace=True),
 

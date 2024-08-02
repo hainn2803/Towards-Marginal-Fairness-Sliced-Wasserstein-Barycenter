@@ -57,15 +57,16 @@ def one_dimensional_Wasserstein(X, Y, theta, u_weights=None, v_weights=None, p=2
     v_values = torch.matmul(Y, theta.transpose(0, 1))
     n = u_values.shape[0]
     m = v_values.shape[0]
+
     if u_weights is None:
         u_weights = torch.full(u_values.shape, 1. / n,
-                               dtype=u_values.dtype, device=u_values.device)
+                            dtype=u_values.dtype, device=u_values.device)
     elif u_weights.ndim != u_values.ndim:
         u_weights = torch.repeat_interleave(
             u_weights[..., None], u_values.shape[-1], -1)
     if v_weights is None:
         v_weights = torch.full(v_values.shape, 1. / m,
-                               dtype=v_values.dtype, device=v_values.device)
+                            dtype=v_values.dtype, device=v_values.device)
     elif v_weights.ndim != v_values.ndim:
         v_weights = torch.repeat_interleave(
             v_weights[..., None], v_values.shape[-1], -1)

@@ -4,8 +4,9 @@ import os
 mpl.use('Agg')
 from swae.models.mnist import MNISTAutoencoder
 from swae.models.cifar10 import CIFAR10Autoencoder
+from swae.models.stl10 import STL10Autoencoder
 from swae.distributions import *
-from evaluate.eval import *
+from evaluate.eval_ws import *
 from evaluate.eval_fid import *
 from dataloader.dataloader import *
 from utils import *
@@ -16,8 +17,12 @@ def main():
     parser = argparse.ArgumentParser(description='Sliced Wasserstein Autoencoder PyTorch')
     parser.add_argument('--dataset', default='mnist', help='dataset name')
     parser.add_argument('--num-classes', type=int, default=10, help='number of classes')
-    parser.add_argument('--datadir', default='/input/', help='path to dataset')
-    parser.add_argument('--outdir', default='/output/', help='directory to output images and model checkpoints')
+    parser.add_argument('--datadir', default='data', help='path to dataset')
+    parser.add_argument('--outdir', default='result', help='directory to output images and model checkpoints')
+    parser.add_argument('--imagedir', default='images', help='path to generative image directory')
+    parser.add_argument('--statdir', default='stats', help='path to statistic directory')
+    parser.add_argument('--dims', type=int, default=2048, metavar='ES',
+                        help='InceptionV3 layer')
 
     parser.add_argument('--batch-size', type=int, default=500, metavar='BS',
                         help='input batch size for training (default: 500)')
@@ -26,6 +31,8 @@ def main():
 
     parser.add_argument('--lr', type=float, default=0.001, metavar='LR',
                         help='learning rate (default: 0.001)')
+    parser.add_argument('--weight_swd', type=float, default=1,
+                        help='weight of swd (default: 1)')
     parser.add_argument('--weight_fsw', type=float, default=1,
                         help='weight of fsw (default: 1)')
 
@@ -33,23 +40,30 @@ def main():
                         help='method (default: EFBSW)')
     parser.add_argument('--num-projections', type=int, default=10000, metavar='NP',
                         help='number of projections (default: 500)')
+
     parser.add_argument('--embedding-size', type=int, default=48, metavar='ES',
                         help='embedding latent space (default: 48)')
-
     parser.add_argument('--distribution', type=str, default='circle', metavar='DIST',
                         help='Latent Distribution (default: circle)')
+
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
     parser.add_argument('--num-workers', type=int, default=8, metavar='N',
                         help='number of dataloader workers if device is CPU (default: 8)')
     parser.add_argument('--seed', type=int, default=42, metavar='S',
                         help='random seed (default: 42)')
+
     parser.add_argument('--lambda-obsw', type=float, default=1, metavar='OBSW',
                         help='hyper-parameter of OBSW method')
+
     parser.add_argument('--checkpoint-period', type=int, default=300, metavar='S',
                         help='checkpoint period (100, 200, 300)')
     args = parser.parse_args()
 
+    use_cuda = not args.no_cuda and torch.cuda.is_available()
+    device = torch.device("cuda" if use_cuda else "cpu")
+    print(device)
+    # set random seed
     torch.manual_seed(args.seed)
     if use_cuda:
         torch.cuda.manual_seed(args.seed)
@@ -68,6 +82,31 @@ def main():
     outdir_checkpoint = os.path.join(args.outdir, "checkpoint")
     args.datadir = os.path.join(args.datadir, args.dataset)
 
+    if args.dataset != "mnist":
+
+        args.stat_ground_truth = os.path.join(args.statdir, args.dataset)
+
+        args.imagedir = os.path.join(args.imagedir, args.dataset)
+        args.imagedir = os.path.join(args.imagedir, f"seed_{args.seed}")
+        args.imagedir = os.path.join(args.imagedir, f"lr_{args.lr}")
+        args.imagedir = os.path.join(args.imagedir, f"fsw_{args.weight_fsw}")
+        args.imagedir = os.path.join(args.imagedir, args.method)
+        args.gen_dir = os.path.join(args.imagedir, "gen")
+
+        args.statdir = os.path.join(args.statdir, args.dataset)
+        args.statdir = os.path.join(args.statdir, f"seed_{args.seed}")
+        args.statdir = os.path.join(args.statdir, f"lr_{args.lr}")
+        args.statdir = os.path.join(args.statdir, f"fsw_{args.weight_fsw}")
+        args.statdir = os.path.join(args.statdir, args.method)
+        args.stat_gen_dir = os.path.join(args.statdir, "gen")
+
+        os.makedirs(args.imagedir, exist_ok=True)
+        os.makedirs(args.gen_dir, exist_ok=True)
+
+        os.makedirs(args.statdir, exist_ok=True)
+        os.makedirs(args.stat_gen_dir, exist_ok=True)
+
+
     if args.dataset == 'mnist':
         data_loader = MNISTDataLoader(data_dir=args.datadir, train_batch_size=args.batch_size, test_batch_size=args.batch_size_test)
         train_loader, test_loader = data_loader.create_dataloader()
@@ -76,6 +115,10 @@ def main():
         data_loader = CIFAR10DataLoader(data_dir=args.datadir, train_batch_size=args.batch_size, test_batch_size=args.batch_size_test)
         train_loader, test_loader = data_loader.create_dataloader()
         model = CIFAR10Autoencoder(embedding_dim=args.embedding_size).to(device)
+    elif args.dataset == 'stl10':
+        data_loader = STL10DataLoader(data_dir=args.datadir, train_batch_size=args.batch_size, test_batch_size=args.batch_size_test)
+        train_loader, test_loader = data_loader.create_dataloader()
+        model = STL10Autoencoder(embedding_dim=args.embedding_size).to(device)
     else:
         raise NotImplementedError
 

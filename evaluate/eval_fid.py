@@ -81,7 +81,7 @@ def ultimate_evaluate_fid(args,
 
         # Compute WG
         WG = 0
-        real_images_path = f"stats/{args.dataset}/ground_truth.npz"
+        real_images_path = f"{args.stat_ground_truth}/ground_truth.npz"
         WG = compute_WG(stat_gen_path, real_images_path)
         print(f"WG: {WG}")
 
@@ -96,7 +96,8 @@ def ultimate_evaluate_fid(args,
                              list_labels=tensor_labels,
                              prior_distribution=prior_distribution,
                              num_classes=args.num_classes,
-                             device=device)
+                             num_samples=total_images,
+                             device="cpu")
         print(f"F: {F}, AD: {AD}")
 
         # Compute F and AD in image space

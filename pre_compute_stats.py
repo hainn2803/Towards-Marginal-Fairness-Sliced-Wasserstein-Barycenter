@@ -1,6 +1,6 @@
 import argparse
 # from evaluate.eval_fid import *
-from dataloader.dataloader import CIFAR10LTDataLoader
+from dataloader.dataloader import CIFAR10DataLoader, STL10DataLoader
 from utils import make_jpg_images
 from fid.fid_score import save_fid_stats
 from fid.inception import *
@@ -9,7 +9,10 @@ import os
 
 def compute_statistics(args, device):
     if args.dataset == 'cifar10':
-        data_loader = CIFAR10LTDataLoader(data_dir=args.datadir, train_batch_size=args.batch_size,
+        data_loader = CIFAR10DataLoader(data_dir=args.datadir, train_batch_size=args.batch_size,
+                                          test_batch_size=args.batch_size_test)
+    elif args.dataset == 'stl10':
+        data_loader = STL10DataLoader(data_dir=args.datadir, train_batch_size=args.batch_size,
                                           test_batch_size=args.batch_size_test)
     else:
         data_loader = None
@@ -21,11 +24,11 @@ def compute_statistics(args, device):
         list_real_images.append(x_test)
         for cls_id in range(10):
             class_jpg = make_jpg_images(tensor=x_test[y_test == cls_id],
-                                        output_folder=f"{args.images_path}/class_{cls_id}")
+                                        output_folder=f"{args.images_path}/{args.dataset}/class_{cls_id}")
             list_class_jpg[cls_id] = class_jpg
 
     tensor_real_images = torch.cat(list_real_images, dim=0).cpu()
-    real_images_path = make_jpg_images(tensor=tensor_real_images, output_folder=f"{args.images_path}/ground_truth")
+    real_images_path = make_jpg_images(tensor=tensor_real_images, output_folder=f"{args.images_path}/{args.dataset}/ground_truth")
 
     dataset_path = os.path.join(args.stat_dir, args.dataset)
     os.makedirs(dataset_path, exist_ok=True)
@@ -35,7 +38,7 @@ def compute_statistics(args, device):
         save_fid_stats(paths=paths, batch_size=args.batch_size_test, device=device, dims=args.dims,
                        num_workers=args.num_workers)
 
-    paths = [f"{args.images_path}/ground_truth", f"{args.stat_dir}/ground_truth"]
+    paths = [f"{args.images_path}/{args.dataset}/ground_truth", f"{args.stat_dir}/{args.dataset}/ground_truth"]
     save_fid_stats(paths=paths, batch_size=args.batch_size_test, device=device, dims=args.dims,
                    num_workers=args.num_workers)
 

@@ -2,6 +2,7 @@ import argparse
 import os
 from swae.models.mnist import MNISTAutoencoder
 from swae.models.cifar10 import CIFAR10Autoencoder
+from swae.models.stl10 import STL10Autoencoder
 from swae.trainer import SWAEBatchTrainer
 from swae.distributions import *
 import torch.optim as optim
@@ -19,45 +20,53 @@ def main():
     parser.add_argument('--num-classes', type=int, default=10, help='number of classes')
     parser.add_argument('--datadir', default='/input/', help='path to dataset')
     parser.add_argument('--outdir', default='/output/', help='directory to output images and model checkpoints')
+
     parser.add_argument('--batch-size', type=int, default=500, metavar='BS',
                         help='input batch size for training (default: 500)')
     parser.add_argument('--batch-size-test', type=int, default=500, metavar='BST',
                         help='input batch size for evaluating (default: 500)')
+
     parser.add_argument('--epochs', type=int, default=200, metavar='N',
                         help='number of epochs to train (default: 30)')
     parser.add_argument('--lr', type=float, default=0.001, metavar='LR',
                         help='learning rate (default: 0.0005)')
+
     parser.add_argument('--weight_swd', type=float, default=1,
                         help='weight of swd (default: 1)')
     parser.add_argument('--weight_fsw', type=float, default=1,
                         help='weight of fsw (default: 1)')
+
     parser.add_argument('--method', type=str, default='FEFBSW', metavar='MED',
                         help='method (default: FEFBSW)')
     parser.add_argument('--num-projections', type=int, default=10000, metavar='NP',
                         help='number of projections (default: 500)')
     parser.add_argument('--embedding-size', type=int, default=48, metavar='ES',
-    parser.add_argument('--embedding-size', type=int, default=48, metavar='ES',
                         help='embedding latent space (default: 48)')
+
     parser.add_argument('--alpha', type=float, default=0.9, metavar='A',
                         help='RMSprop alpha/rho (default: 0.9)')
     parser.add_argument('--beta1', type=float, default=0.9, metavar='B1',
                         help='Adam beta1 (default: 0.9)')
     parser.add_argument('--beta2', type=float, default=0.999, metavar='B2',
                         help='Adam beta2 (default: 0.999)')
+
     parser.add_argument('--distribution', type=str, default='circle', metavar='DIST',
                         help='Latent Distribution (default: circle)')
     parser.add_argument('--optimizer', type=str, default='adam',
                         help='Optimizer (default: adam)')
+
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
     parser.add_argument('--num-workers', type=int, default=8, metavar='N',
                         help='number of dataloader workers if device is CPU (default: 8)')
     parser.add_argument('--seed', type=int, default=42, metavar='S',
                         help='random seed (default: 42)')
-    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
+
+    parser.add_argument('--log-interval', type=int, default=1, metavar='N',
                         help='number of batches to log training status (default: 10)')
     parser.add_argument('--saved-model-interval', type=int, default=100, metavar='N',
                         help='number of epochs to save training artifacts (default: 1)')
+                        
     parser.add_argument('--lambda-obsw', type=float, default=1.0, metavar='OBSW',
                         help='hyper-parameter of OBSW method')
     args = parser.parse_args()
@@ -114,6 +123,14 @@ def main():
         data_loader = CIFAR10DataLoader(data_dir=args.datadir, train_batch_size=args.batch_size, test_batch_size=args.batch_size_test)
         train_loader, test_loader = data_loader.create_dataloader()
         model = CIFAR10Autoencoder(embedding_dim=args.embedding_size).to(device)
+    elif args.dataset == 'stl10':
+        data_loader = STL10DataLoader(data_dir=args.datadir, train_batch_size=args.batch_size, test_batch_size=args.batch_size_test)
+        train_loader, test_loader = data_loader.create_dataloader()
+        model = STL10Autoencoder(embedding_dim=args.embedding_size).to(device)
+    elif args.dataset == 'mnist_lt':
+        data_loader = MNISTLTDataLoader(data_dir=args.datadir, train_batch_size=args.batch_size, test_batch_size=args.batch_size_test)
+        train_loader, test_loader = data_loader.create_dataloader()
+        model = MNISTAutoencoder().to(device)
     else:
         raise NotImplementedError
 
@@ -129,7 +146,7 @@ def main():
     else:
         optimizer = optim.SGD(model.parameters(), lr=args.lr)
 
-    if args.dataset == 'mnist':
+    if args.dataset == 'mnist' or args.dataset == 'mnist_lt':
         if args.distribution == 'circle':
             distribution_fn = rand_cirlce2d
         elif args.distribution == 'ring':
