@@ -143,31 +143,41 @@ def main():
         check_path = os.path.isfile(pretrained_model_path)
         print(f"Check if pretrained model path {pretrained_model_path} exit or not: {check_path}")
         assert os.path.isfile(pretrained_model_path) is True, f"not exist {pretrained_model_path}"
-        output_file = f'{args.outdir}/evaluate_epoch_{args.checkpoint_period}_{args.method}.log'
+        output_file = f'{args.outdir}/evaluate_epoch_{args.checkpoint_period}_{args.method}_ulti.log'
         if device == "cpu":
             model.load_state_dict(torch.load(pretrained_model_path, map_location=torch.device('cpu')))
         else:
             model.load_state_dict(torch.load(pretrained_model_path))
 
             if args.dataset == "mnist":
-                RL, LP, WG, F, AD = ultimate_evaluation(args=args,
-                                                        model=model,
-                                                        test_loader=test_loader,
-                                                        prior_distribution=distribution_fn,
-                                                        device=device)
+                RL, LP, WG, F_RL, W_RL, F, W, F_images, W_images = ultimate_evaluation(args=args,
+                                                                    model=model,
+                                                                    test_loader=test_loader,
+                                                                    prior_distribution=distribution_fn,
+                                                                    device=device)
             else:
-                RL, LP, WG, F, AD = ultimate_evaluate_fid(args=args,
-                                                          model=model,
-                                                          test_loader=test_loader,
-                                                          prior_distribution=distribution_fn,
-                                                          device=device)
+                RL, LP, WG, F_RL, W_RL, F, W, F_images, W_images = ultimate_evaluate_fid(args=args,
+                                                                    model=model,
+                                                                    test_loader=test_loader,
+                                                                    prior_distribution=distribution_fn,
+                                                                    device=device)
+        
         with open(output_file, 'a') as f:
+
             f.write(f"Evaluating pretrained model: {pretrained_model_path}:\n")
-            f.write(f" +) Reconstruction loss: {RL}\n")
-            f.write(f" +) Wasserstein distance between generated and real images: {WG}\n")
-            f.write(f" +) Wasserstein distance between posterior and prior distribution: {LP}\n")
-            f.write(f" +) Fairness: {F}\n")
-            f.write(f" +) Averaging distance: {AD}\n")
+            f.write(f" +) Reconstruction loss (RL): {RL}\n")
+            f.write(f" +) Wasserstein distance between generated and real images (WG): {WG}\n")
+            f.write(f" +) Wasserstein distance between posterior and prior distribution (LP): {LP}\n")
+
+            f.write(f" +) Fairness of reconstruction loss (F_RL): {F_RL}\n")
+            f.write(f" +) Average distance of reconstruction loss (W_RL): {W_RL}\n")
+
+            f.write(f" +) Fairness of Wasserstein distance (F): {F}\n")
+            f.write(f" +) Average distance of Wasserstein distance (W): {W}\n")
+
+            f.write(f" +) Fairness of images (F_images): {F_images}\n")
+            f.write(f" +) Average distance of images (W_images): {W_images}\n")
+
             f.write("\n")
 
 

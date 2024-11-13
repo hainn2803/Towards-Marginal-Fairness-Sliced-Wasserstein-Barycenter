@@ -1,0 +1,20 @@
+\begin{table}[H]
+\footnotesize
+\centering
+\caption{Comparison of methods with $\kappa_2 =0.5$ on MNIST after 500 epochs.}
+\label{tab:mnist_0.5_500}
+\begin{tabular}{@{}cccccccc@{}}
+\toprule
+Methods & $\text{RL}$ ($\downarrow$) & $\text{W}_{2,\text{latent}}^{2}$ ($\downarrow$) & $\text{W}_{2,\text{image}}^{2}$ ($\downarrow$) & $\text{F}$ ($\downarrow$) & $\text{W}$ ($\downarrow$) & $\text{F}_{\text{images}}$ ($\downarrow$) & $\text{W}_{\text{images}}$ ($\downarrow$) \\
+\midrule
+UBSW & 0.640& 610.414& 135.944& nan& nan& nan\\
+MFSWB $\lambda = 0.1$ & 0.640& 609.740& 142.530& nan& nan& nan\\
+MFSWB $\lambda = 1.0$ & 0.641& 609.201& 142.289& nan& nan& nan\\
+MFSWB $\lambda = 10.0$ & 0.640& 609.960& 141.503& nan& nan& nan\\
+s-MFBSW & 0.640& 610.291& 134.766& nan& nan& nan\\
+us-MFBSW & 0.642& 608.756& 131.934& nan& nan& nan\\
+es-MFBSW & 0.643& 606.019& 132.170& nan& nan& nan\\
+
+\bottomrule
+\end{tabular}
+\end{table}

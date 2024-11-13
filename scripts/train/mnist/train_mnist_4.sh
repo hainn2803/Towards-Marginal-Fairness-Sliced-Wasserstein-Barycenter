@@ -1,19 +1,19 @@
 weight_fsw_values=(0.5)
-methods=(BSW)
+methods=(lowerboundFBSW BSW)
 num_epochs=250
 seed_id=42
 batch_size=1000
 batch_size_test=128
 distribution="circle"
 optimizer="rmsprop"
-lr=0.0001
+lr=0.002
 saved_model_interval=50
 alpha=0.9
 datadir="data"
 outdir="result"
 weight_swd=8.0
 
-gpu_id=7
+gpu_id=5
 
 CUDA_VISIBLE_DEVICES="$gpu_id" python3 train.py \
                                     --dataset mnist \
@@ -32,8 +32,6 @@ CUDA_VISIBLE_DEVICES="$gpu_id" python3 train.py \
                                     --weight_fsw 0.0 \
                                     --method None \
                                     --saved-model-interval "$saved_model_interval"
-
-
 
 
 for weight_fsw in "${weight_fsw_values[@]}"; do

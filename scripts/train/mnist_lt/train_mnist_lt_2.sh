@@ -1,5 +1,5 @@
 weight_fsw_values=(0.5)
-methods=(EFBSW FBSW lowerboundFBSW)
+methods=(EFBSW FBSW)
 num_epochs=250
 seed_id=42
 batch_size=1000
@@ -10,11 +10,10 @@ lr=0.001
 saved_model_interval=50
 alpha=0.9
 datadir="data"
-outdir="result"
+outdir="result2"
 weight_swd=8.0
 
-gpu_id=7
-
+gpu_id=2
 
 for weight_fsw in "${weight_fsw_values[@]}"; do
     for method in "${methods[@]}"; do

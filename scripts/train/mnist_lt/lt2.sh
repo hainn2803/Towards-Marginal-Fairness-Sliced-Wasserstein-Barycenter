@@ -1,5 +1,5 @@
 weight_fsw_values=(0.5)
-obsw_weights=(0.1 1.0 10.0)
+methods=(EFBSW FBSW)
 num_epochs=250
 seed_id=42
 batch_size=1000
@@ -10,13 +10,13 @@ lr=0.001
 saved_model_interval=50
 alpha=0.9
 datadir="data"
-outdir="result2"
+outdir="result001"
 weight_swd=8.0
 
-gpu_id=7
+gpu_id=2
 
 for weight_fsw in "${weight_fsw_values[@]}"; do
-    for lmbd in "${obsw_weights[@]}"; do
+    for method in "${methods[@]}"; do
         CUDA_VISIBLE_DEVICES="$gpu_id" python3 train.py \
             --dataset mnist_lt \
             --num-classes 10 \
@@ -32,8 +32,7 @@ for weight_fsw in "${weight_fsw_values[@]}"; do
             --seed "$seed_id" \
             --weight_swd "$weight_swd" \
             --weight_fsw "$weight_fsw" \
-            --method OBSW \
-            --lambda-obsw "$lmbd" \
+            --method "$method" \
             --saved-model-interval "$saved_model_interval"
     done
 done

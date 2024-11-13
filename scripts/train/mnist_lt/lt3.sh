@@ -10,7 +10,7 @@ lr=0.001
 saved_model_interval=50
 alpha=0.9
 datadir="data"
-outdir="result2"
+outdir="result001"
 weight_swd=8.0
 
 gpu_id=7

@@ -6,14 +6,14 @@ batch_size=1000
 batch_size_test=128
 distribution="circle"
 optimizer="rmsprop"
-lr=0.0001
+lr=0.002
 saved_model_interval=50
 alpha=0.9
 datadir="data"
 outdir="result"
 weight_swd=8.0
 
-gpu_id=2
+gpu_id=4
 
 for weight_fsw in "${weight_fsw_values[@]}"; do
     for lmbd in "${obsw_weights[@]}"; do

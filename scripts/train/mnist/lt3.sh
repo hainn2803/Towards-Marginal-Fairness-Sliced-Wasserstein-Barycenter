@@ -7,17 +7,17 @@ batch_size_test=128
 distribution="circle"
 optimizer="rmsprop"
 lr=0.001
-saved_model_interval=50
+saved_model_interval=10
 alpha=0.9
 datadir="data"
-outdir="result2"
+outdir="result001_classification"
 weight_swd=8.0
 
-gpu_id=7
+gpu_id=2
 
 for weight_fsw in "${weight_fsw_values[@]}"; do
     for lmbd in "${obsw_weights[@]}"; do
-        CUDA_VISIBLE_DEVICES="$gpu_id" python3 train.py \
+        CUDA_VISIBLE_DEVICES="$gpu_id" python3 train_classification.py \
             --dataset mnist_lt \
             --num-classes 10 \
             --datadir "$datadir" \

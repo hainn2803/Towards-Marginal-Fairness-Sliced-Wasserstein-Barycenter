@@ -10,7 +10,7 @@ lr=0.001
 saved_model_interval=50
 alpha=0.9
 datadir="data"
-outdir="result2"
+outdir="result001"
 weight_swd=8.0
 
 gpu_id=2
@@ -32,7 +32,6 @@ CUDA_VISIBLE_DEVICES="$gpu_id" python3 train.py \
                                     --weight_fsw 0.0 \
                                     --method None \
                                     --saved-model-interval "$saved_model_interval"
-
 
 
 
