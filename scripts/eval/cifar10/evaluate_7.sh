@@ -1,5 +1,5 @@
 methods=(EFBSW FBSW lowerboundFBSW BSW)
-obsw_weights=(0.1)
+obsw_weights=(0.1 1.0 10.0)
 checkpoint_periods=(500)
 fsw=0.5
 
@@ -19,7 +19,7 @@ seed=42
 lr=0.0005
 dataset=cifar10
 
-gpu_id=3
+gpu_id=1
 
 for ckp in "${checkpoint_periods[@]}"; do
 

@@ -101,19 +101,19 @@ def ultimate_evaluate_fid(args,
         print(f"F: {F}, AD: {AD}")
 
         # Compute F and AD in image space
-        list_images_paths = list()
-        for cls_id in range(args.num_classes):
-            stat_cls = f"stats/cifar10/class_{cls_id}.npz"
-            list_images_paths.append(stat_cls)
-        F_images, AD_images = compute_F_AD_images(stat_gen_path, list_images_paths)
-        print(f"FI: {F_images}, ADI: {AD_images}")
+        # list_images_paths = list()
+        # for cls_id in range(args.num_classes):
+        #     stat_cls = f"stats/cifar10/class_{cls_id}.npz"
+        #     list_images_paths.append(stat_cls)
+        # F_images, AD_images = compute_F_AD_images(stat_gen_path, list_images_paths)
+        # print(f"FI: {F_images}, ADI: {AD_images}")
 
         RL = convert_to_cpu_number(RL)
         LP = convert_to_cpu_number(LP)
         WG = convert_to_cpu_number(WG)
         F = convert_to_cpu_number(F)
         AD = convert_to_cpu_number(AD)
-        F_images = convert_to_cpu_number(F_images)
-        AD_images = convert_to_cpu_number(AD_images)
+        # F_images = convert_to_cpu_number(F_images)
+        # AD_images = convert_to_cpu_number(AD_images)
 
-        return RL, LP, WG, F, AD, F_images, AD_images
+        return RL, LP, WG, F, AD

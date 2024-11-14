@@ -156,11 +156,11 @@ def main():
                                                                     prior_distribution=distribution_fn,
                                                                     device=device)
             else:
-                RL, LP, WG, F_RL, W_RL, F, W, F_images, W_images = ultimate_evaluate_fid(args=args,
-                                                                    model=model,
-                                                                    test_loader=test_loader,
-                                                                    prior_distribution=distribution_fn,
-                                                                    device=device)
+                RL, LP, WG, F, W, F_images, W_images = ultimate_evaluate_fid(args=args,
+                                                                                model=model,
+                                                                                test_loader=test_loader,
+                                                                                prior_distribution=distribution_fn,
+                                                                                device=device)
         
         with open(output_file, 'a') as f:
 
@@ -169,8 +169,8 @@ def main():
             f.write(f" +) Wasserstein distance between generated and real images (WG): {WG}\n")
             f.write(f" +) Wasserstein distance between posterior and prior distribution (LP): {LP}\n")
 
-            f.write(f" +) Fairness of reconstruction loss (F_RL): {F_RL}\n")
-            f.write(f" +) Average distance of reconstruction loss (W_RL): {W_RL}\n")
+            # f.write(f" +) Fairness of reconstruction loss (F_RL): {F_RL}\n")
+            # f.write(f" +) Average distance of reconstruction loss (W_RL): {W_RL}\n")
 
             f.write(f" +) Fairness of Wasserstein distance (F): {F}\n")
             f.write(f" +) Average distance of Wasserstein distance (W): {W}\n")

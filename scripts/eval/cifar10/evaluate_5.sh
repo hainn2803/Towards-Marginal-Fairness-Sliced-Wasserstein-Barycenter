@@ -19,7 +19,7 @@ seed=42
 lr=0.0005
 dataset=cifar10
 
-gpu_id=2
+gpu_id=3
 
 for ckp in "${checkpoint_periods[@]}"; do
 

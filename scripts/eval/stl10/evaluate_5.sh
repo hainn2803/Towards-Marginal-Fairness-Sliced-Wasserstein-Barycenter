@@ -10,16 +10,16 @@ image_dir=images
 
 dims=2048
 distribution=uniform
-embed_size=48
+embed_size=128
 
 batch_size=128
 batch_size_test=128
 
-seed=42
+seed=28
 lr=0.0005
-dataset=cifar10
+dataset=stl10
 
-gpu_id=2
+gpu_id=4
 
 for ckp in "${checkpoint_periods[@]}"; do
 
