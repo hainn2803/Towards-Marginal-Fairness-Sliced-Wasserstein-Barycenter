@@ -1,4 +1,4 @@
-# Sliced Wasserstein Autoencoder with Class-Fair Representation
+# Towards Marginal Fairness Sliced Wasserstein Barycenter (ICLR 2025 Spotlight)
 
 ## Environment Installation
 
